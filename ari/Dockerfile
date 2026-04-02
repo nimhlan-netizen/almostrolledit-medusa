@@ -14,7 +14,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 COPY package*.json ./
 COPY tsconfig.json ./tsconfig.json
-RUN npm ci --omit=dev --no-audit --no-fund
+COPY --from=deps /app/node_modules ./node_modules
 COPY --from=build /app/.medusa ./.medusa
 COPY --from=build /app/medusa-config.ts ./medusa-config.ts
 COPY --from=build /app/instrumentation.ts ./instrumentation.ts
