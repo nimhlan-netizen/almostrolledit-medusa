@@ -1,0 +1,12 @@
+node_modules
+.git
+.next
+coverage
+.env
+.env.*
+npm-debug.log*
+yarn-error.log
+test-results
+playwright-report
+blob-report
+.swc
