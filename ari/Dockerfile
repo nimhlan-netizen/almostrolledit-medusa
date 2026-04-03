@@ -10,14 +10,10 @@ COPY . .
 RUN npm run build
 
 FROM node:22-bookworm-slim AS runner
-WORKDIR /app
+WORKDIR /app/.medusa/server
 ENV NODE_ENV=production
-COPY package*.json ./
-COPY tsconfig.json ./tsconfig.json
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=build /app/.medusa ./.medusa
-COPY --from=build /app/medusa-config.ts ./medusa-config.ts
-COPY --from=build /app/instrumentation.ts ./instrumentation.ts
-COPY --from=build /app/src ./src
+COPY --from=build /app/.medusa/server/package*.json ./
+RUN npm ci --omit=dev --no-audit --no-fund
+COPY --from=build /app/.medusa/server ./
 EXPOSE 9000
 CMD ["sh", "-c", "npx medusa db:migrate && npm run start"]
