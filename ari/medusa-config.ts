@@ -8,9 +8,12 @@ const databaseUrl = process.env.DATABASE_URL?.includes("sslmode=")
     ? `${process.env.DATABASE_URL}${process.env.DATABASE_URL.includes("?") ? "&" : "?"}sslmode=disable`
     : undefined
 
+const redisUrl = process.env.REDIS_URL
+
 module.exports = defineConfig({
   projectConfig: {
     databaseUrl,
+    redisUrl,
     http: {
       storeCors: process.env.STORE_CORS!,
       adminCors: process.env.ADMIN_CORS!,
