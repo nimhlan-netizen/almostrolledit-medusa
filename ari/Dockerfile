@@ -17,4 +17,4 @@ COPY --from=build /app/.medusa/server/package*.json ./
 RUN npm ci --omit=dev --no-audit --no-fund
 COPY --from=build /app/.medusa/server ./
 EXPOSE 9000
-CMD ["sh", "-c", "npx medusa db:migrate && npm run start"]
+CMD ["sh", "-c", "npx medusa db:migrate && npm run seed && npm run start"]
