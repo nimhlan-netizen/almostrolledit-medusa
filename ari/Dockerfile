@@ -12,6 +12,7 @@ RUN npm run build
 FROM node:22-bookworm-slim AS runner
 WORKDIR /app/.medusa/server
 ENV NODE_ENV=production
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
 COPY --from=build /app/.medusa/server/package*.json ./
 RUN npm ci --omit=dev --no-audit --no-fund
 COPY --from=build /app/.medusa/server ./
