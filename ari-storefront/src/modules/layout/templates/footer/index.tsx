@@ -1,3 +1,4 @@
+import { getSiteSettings } from "@lib/cms/loaders"
 import { listCategories } from "@lib/data/categories"
 import { listCollections } from "@lib/data/collections"
 import { Text, clx } from "@medusajs/ui"
@@ -5,10 +6,13 @@ import { Text, clx } from "@medusajs/ui"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 export default async function Footer() {
-  const { collections } = await listCollections({
-    fields: "*products",
-  })
-  const productCategories = await listCategories()
+  const [{ collections }, productCategories, siteSettings] = await Promise.all([
+    listCollections({
+      fields: "*products",
+    }),
+    listCategories(),
+    getSiteSettings(),
+  ])
 
   return (
     <footer className="w-full border-t border-white/10 bg-[#111111] text-white">
@@ -19,12 +23,24 @@ export default async function Footer() {
               href="/"
               className="font-[Impact] text-4xl uppercase tracking-[0.14em] text-white transition hover:text-[#ff8b4d]"
             >
-              Almost Rolled It
+              {siteSettings.brandName}
             </LocalizedClientLink>
             <p className="mt-4 max-w-md text-sm leading-7 text-white/60">
-              Built on Medusa so products, discounts, and checkout can grow
-              back in without carrying the overhead of the old stack.
+              {siteSettings.footerDescription}
             </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              {siteSettings.socialLinks.map((link) => (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-full border border-white/15 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/70 transition hover:border-[#ff6b1a] hover:text-white"
+                >
+                  {link.name}
+                </a>
+              ))}
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-10 text-small-regular md:gap-x-16 sm:grid-cols-3">
             {productCategories && productCategories?.length > 0 && (
@@ -109,30 +125,16 @@ export default async function Footer() {
             <div className="flex flex-col gap-y-2">
               <span className="txt-small-plus text-white">Explore</span>
               <ul className="txt-small grid grid-cols-1 gap-y-2 text-white/60">
-                <li>
-                  <LocalizedClientLink
-                    href="/store"
-                    className="transition hover:text-white"
-                  >
-                    Store
-                  </LocalizedClientLink>
-                </li>
-                <li>
-                  <LocalizedClientLink
-                    href="/account"
-                    className="transition hover:text-white"
-                  >
-                    Account
-                  </LocalizedClientLink>
-                </li>
-                <li>
-                  <LocalizedClientLink
-                    href="/cart"
-                    className="transition hover:text-white"
-                  >
-                    Cart
-                  </LocalizedClientLink>
-                </li>
+                {siteSettings.navLinks.map((link) => (
+                  <li key={link.href}>
+                    <LocalizedClientLink
+                      href={link.href}
+                      className="transition hover:text-white"
+                    >
+                      {link.label}
+                    </LocalizedClientLink>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
@@ -142,7 +144,7 @@ export default async function Footer() {
             © {new Date().getFullYear()} Almost Rolled It. All rights reserved.
           </Text>
           <Text className="txt-compact-small uppercase tracking-[0.18em]">
-            Built lean. Ready to scale.
+            {siteSettings.footerTagline}
           </Text>
         </div>
       </div>

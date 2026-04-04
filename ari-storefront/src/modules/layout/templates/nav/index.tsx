@@ -1,5 +1,6 @@
 import { Suspense } from "react"
 
+import { getSiteSettings } from "@lib/cms/loaders"
 import { listRegions } from "@lib/data/regions"
 import { listLocales } from "@lib/data/locales"
 import { getLocale } from "@lib/data/locale-actions"
@@ -9,10 +10,11 @@ import CartButton from "@modules/layout/components/cart-button"
 import SideMenu from "@modules/layout/components/side-menu"
 
 export default async function Nav() {
-  const [regions, locales, currentLocale] = await Promise.all([
+  const [regions, locales, currentLocale, siteSettings] = await Promise.all([
     listRegions().then((regions: StoreRegion[]) => regions),
     listLocales(),
     getLocale(),
+    getSiteSettings(),
   ])
 
   return (
@@ -35,25 +37,24 @@ export default async function Nav() {
               className="font-[Impact] text-2xl uppercase tracking-[0.18em] text-white transition hover:text-[#ff8b4d]"
               data-testid="nav-store-link"
             >
-              Almost Rolled It
+              {siteSettings.brandName}
             </LocalizedClientLink>
           </div>
 
           <div className="flex h-full flex-1 basis-0 items-center justify-end gap-x-6">
             <div className="hidden h-full items-center gap-x-6 small:flex">
-              <LocalizedClientLink
-                className="uppercase tracking-[0.18em] transition hover:text-white"
-                href="/store"
-              >
-                Store
-              </LocalizedClientLink>
-              <LocalizedClientLink
-                className="uppercase tracking-[0.18em] transition hover:text-white"
-                href="/account"
-                data-testid="nav-account-link"
-              >
-                Account
-              </LocalizedClientLink>
+              {siteSettings.navLinks.slice(0, 2).map((link) => (
+                <LocalizedClientLink
+                  key={link.href}
+                  className="uppercase tracking-[0.18em] transition hover:text-white"
+                  href={link.href}
+                  data-testid={
+                    link.href === "/account" ? "nav-account-link" : undefined
+                  }
+                >
+                  {link.label}
+                </LocalizedClientLink>
+              ))}
             </div>
             <Suspense
               fallback={

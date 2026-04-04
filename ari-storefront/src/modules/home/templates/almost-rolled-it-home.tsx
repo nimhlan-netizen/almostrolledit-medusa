@@ -1,70 +1,25 @@
+import { HomepageContent } from "@lib/cms/homepage"
 import { HttpTypes } from "@medusajs/types"
 import { Heading, Text } from "@medusajs/ui"
 
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import ProductPreview from "@modules/products/components/product-preview"
 
-const socialLinks = [
-  { name: "YouTube", href: "#" },
-  { name: "Instagram", href: "#" },
-  { name: "TikTok", href: "#" },
-]
-
-const latestContent = [
-  {
-    title: "Moab Hell's Revenge Full Run",
-    type: "Video",
-    date: "New episode",
-    image:
-      "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=1200",
-  },
-  {
-    title: "New Suspension Setup Test",
-    type: "Build",
-    date: "Shop notes",
-    image:
-      "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fd?auto=format&fit=crop&q=80&w=1200",
-  },
-  {
-    title: "Recovery Gear That Actually Earned Its Keep",
-    type: "Guide",
-    date: "Field tested",
-    image:
-      "https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&q=80&w=1200",
-  },
-]
-
-const partnerDiscounts = [
-  {
-    brand: "Rugged Radios",
-    code: "CRAWL15",
-    detail: "Trail comms and chase support gear",
-  },
-  {
-    brand: "Baja Designs",
-    code: "TRAIL10",
-    detail: "Lighting for night runs and camp setup",
-  },
-  {
-    brand: "Factor 55",
-    code: "RECOVER10",
-    detail: "Recovery hardware worth trusting on real terrain",
-  },
-]
-
 export default function AlmostRolledItHome({
   region,
   products,
+  content,
 }: {
   region: HttpTypes.StoreRegion
   products: HttpTypes.StoreProduct[]
+  content: HomepageContent
 }) {
   return (
     <div className="bg-[#0a0a0a] text-white">
       <section className="relative overflow-hidden border-b border-white/10">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=1800"
+            src={content.hero.backgroundImageUrl}
             alt="Off-road rig on a rocky trail"
             className="h-full w-full object-cover object-center opacity-30"
           />
@@ -74,42 +29,41 @@ export default function AlmostRolledItHome({
         <div className="content-container relative flex min-h-[82vh] flex-col justify-center gap-10 py-24">
           <div className="max-w-4xl">
             <Text className="mb-5 text-xs uppercase tracking-[0.35em] text-[#ff6b1a]">
-              Off-road films, trail gear, and the next build chapter
+              {content.hero.eyebrow}
             </Text>
             <Heading
               level="h1"
               className="max-w-4xl font-[Impact] text-6xl uppercase leading-[0.88] tracking-[0.03em] text-white md:text-8xl"
             >
-              Almost Rolled It
+              {content.hero.title}
             </Heading>
             <p className="mt-6 max-w-2xl text-base leading-7 text-white/75 md:text-lg">
-              The storefront is rebuilding on a leaner stack while Shopify gets
-              phased out. The stories stay here, the gear gets managed in
-              Medusa, and the next version is built to scale back up when the
-              traction is there.
+              {content.hero.description}
             </p>
           </div>
 
           <div className="flex flex-col gap-4 sm:flex-row">
             <LocalizedClientLink
-              href="/store"
+              href={content.hero.primaryCta.href}
               className="inline-flex min-w-[220px] items-center justify-center rounded-full bg-[#ff5a1f] px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#ff7a45]"
             >
-              Shop Current Gear
+              {content.hero.primaryCta.label}
             </LocalizedClientLink>
             <a
-              href="#latest"
+              href={content.hero.secondaryCta.href}
               className="inline-flex min-w-[220px] items-center justify-center rounded-full border border-white/20 bg-white/5 px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:border-white/40 hover:bg-white/10"
             >
-              See Latest Drops
+              {content.hero.secondaryCta.label}
             </a>
           </div>
 
           <div className="flex flex-wrap gap-3 pt-4">
-            {socialLinks.map((link) => (
+            {content.socialLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
+                target="_blank"
+                rel="noreferrer"
                 className="rounded-full border border-white/15 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/70 transition hover:border-[#ff6b1a] hover:text-white"
               >
                 {link.name}
@@ -133,21 +87,23 @@ export default function AlmostRolledItHome({
             </Heading>
           </div>
           <p className="max-w-xl text-sm leading-6 text-white/65">
-            This section keeps the brand alive while the commerce stack moves to
-            Medusa. You can replace these cards with real videos, stories, or
-            trail reports in code until we add a content editor.
+            This section is now sourced from Sanity. Latest cards can come from
+            synced Instagram Reels or manual editorial entries.
           </p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-3">
-          {latestContent.map((item) => (
-            <article
+          {content.featuredCards.map((item) => (
+            <a
               key={item.title}
+              href={item.href || "#"}
+              target={item.href ? "_blank" : undefined}
+              rel={item.href ? "noreferrer" : undefined}
               className="overflow-hidden rounded-[28px] border border-white/10 bg-white/5"
             >
               <div className="relative aspect-[4/5]">
                 <img
-                  src={item.image}
+                  src={item.imageUrl}
                   alt={item.title}
                   className="h-full w-full object-cover"
                 />
@@ -164,7 +120,7 @@ export default function AlmostRolledItHome({
                   {item.title}
                 </h3>
               </div>
-            </article>
+            </a>
           ))}
         </div>
       </section>
@@ -188,7 +144,7 @@ export default function AlmostRolledItHome({
             </p>
           </div>
           <div className="grid gap-4">
-            {partnerDiscounts.map((item) => (
+            {content.partnerDiscounts.map((item) => (
               <div
                 key={item.brand}
                 className="rounded-[24px] border border-white/10 bg-[#111111] p-6"
@@ -214,20 +170,20 @@ export default function AlmostRolledItHome({
         <div className="mb-10 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
             <Text className="text-xs uppercase tracking-[0.35em] text-[#ff6b1a]">
-              Merch and product catalog
+              {content.storefront.eyebrow}
             </Text>
             <Heading
               level="h2"
               className="mt-3 font-[Impact] text-5xl uppercase tracking-[0.03em] text-white"
             >
-              Storefront
+              {content.storefront.title}
             </Heading>
           </div>
           <LocalizedClientLink
-            href="/store"
+            href={content.storefront.browseAllHref}
             className="text-sm font-semibold uppercase tracking-[0.22em] text-[#ff8b4d] transition hover:text-white"
           >
-            Browse all products
+            {content.storefront.browseAllLabel}
           </LocalizedClientLink>
         </div>
 
@@ -245,12 +201,10 @@ export default function AlmostRolledItHome({
         ) : (
           <div className="rounded-[28px] border border-dashed border-white/20 bg-white/[0.02] p-10">
             <h3 className="text-2xl uppercase text-white">
-              Merch is paused while the new stack comes online
+              {content.storefront.emptyStateTitle}
             </h3>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-white/65">
-              Once products are added in the Medusa admin, they will show up
-              here automatically. For now, this keeps the storefront live
-              without forcing you to keep Shopify running.
+              {content.storefront.emptyStateDescription}
             </p>
           </div>
         )}
