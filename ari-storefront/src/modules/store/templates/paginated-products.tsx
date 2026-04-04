@@ -1,6 +1,7 @@
 import { listProductsWithSort } from "@lib/data/products"
 import { getRegion } from "@lib/data/regions"
 import ProductPreview from "@modules/products/components/product-preview"
+import EmptyProductState from "@modules/store/components/empty-product-state"
 import { Pagination } from "@modules/store/components/pagination"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 
@@ -65,6 +66,28 @@ export default async function PaginatedProducts({
   })
 
   const totalPages = Math.ceil(count / PRODUCT_LIMIT)
+
+  if (!products.length) {
+    const emptyCopy = collectionId
+      ? {
+          title: "This collection is empty",
+          description:
+            "Products have not been assigned here yet. Check back soon for the next drop.",
+        }
+      : categoryId
+        ? {
+            title: "This category is empty",
+            description:
+              "There is nothing live in this category yet. New releases will show up here once they are published.",
+          }
+        : {
+            title: "The storefront is live but the catalog is empty",
+            description:
+              "Almost Rolled It is set up and ready. Products will appear here as soon as they are added in Medusa Admin.",
+          }
+
+    return <EmptyProductState {...emptyCopy} />
+  }
 
   return (
     <>
